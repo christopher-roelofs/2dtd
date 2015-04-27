@@ -14,19 +14,16 @@ using flixel.util.FlxSpriteUtil;
 class Enemy extends FlxSprite
 {
 	public var speed:Float = 80;
-	public var etype(default, null):Int;
 	private var _brain:FSM;
 	private var _idleTmr:Float;
 	private var _moveDir:Float;
 	public var seesPlayer:Bool = false;
 	public var playerPos(default, null):FlxPoint;
-	private var _sndStep:FlxSound;
 	
-	public function new(X:Float=0, Y:Float=0, EType:Int) 
+	public function new(X:Float=0, Y:Float=0) 
 	{
 		super(X, Y);
-		etype = EType;
-		loadGraphic("assets/images/enemy-" + Std.string(etype) + ".png", true, 16, 16);
+		loadGraphic("assets/images/enemy-0.png", true, 16, 16);
 		setFacingFlip(FlxObject.LEFT, false, false);
 		setFacingFlip(FlxObject.RIGHT, true, false);
 		animation.add("d", [0, 1, 0, 2], 6, false);
@@ -41,8 +38,6 @@ class Enemy extends FlxSprite
 		_idleTmr = 0;
 		playerPos = FlxPoint.get();
 		
-		_sndStep = FlxG.sound.load(AssetPaths.step__wav,.4);
-		_sndStep.proximity(x,y,FlxG.camera.target, FlxG.width *.6);
 	}
 	
 	override public function update():Void 
@@ -53,8 +48,7 @@ class Enemy extends FlxSprite
 		super.update();
 		if ((velocity.x != 0 || velocity.y != 0) && touching == FlxObject.NONE)
 		{
-			_sndStep.setPosition(x + _halfWidth, y + height);
-			_sndStep.play();
+			
 		}
 	}
 	
@@ -132,19 +126,11 @@ class Enemy extends FlxSprite
 		super.draw();
 	}
 	
-	public function changeEnemy(EType:Int):Void
-	{
-		if (etype != EType)
-		{
-			etype = EType;
-			loadGraphic("assets/images/enemy-" + Std.string(etype) + ".png", true, 16, 16);
-		}
-	}
+	
 	
 	override public function destroy():Void 
 	{
 		super.destroy();
 		
-		_sndStep = FlxDestroyUtil.destroy(_sndStep);
 	}
 }

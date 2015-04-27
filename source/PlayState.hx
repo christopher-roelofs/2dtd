@@ -11,6 +11,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxStringUtil;
 import openfl.Assets;
+import flixel.group.FlxTypedGroup;
 import flixel.FlxCamera;
 
 class PlayState extends FlxState
@@ -25,6 +26,9 @@ class PlayState extends FlxState
 	private var _highlightBox:FlxSprite;
 	
 	private var _player:FlxSprite;
+	private var _enemy:FlxSprite;
+	
+	private var _bullets:FlxTypedGroup<Bullet>;
 	
 	override public function create():Void
 	{
@@ -36,6 +40,11 @@ class PlayState extends FlxState
 		_player = new Player();
 		add(_player);
 		FlxG.camera.follow(_player, FlxCamera.STYLE_TOPDOWN, 1);
+		_enemy = new Enemy(10,10);
+		add(_enemy);
+		
+		_bullets = new FlxTypedGroup<Bullet>();
+		_bullets.maxSize = 20;
 		
 		
 		super.create();	
@@ -49,6 +58,8 @@ class PlayState extends FlxState
 	override public function update():Void
 	{
 		FlxG.collide(_player, _collisionMap);
+		FlxG.collide(_enemy, _collisionMap);
+		
 		
 		if (FlxG.mouse.pressed)
 		{
@@ -71,7 +82,12 @@ class PlayState extends FlxState
 	}
 	
 	
-	
+	private function checkEnemyVision(e:Enemy):Void
+	{
+		
+			e.seesPlayer = true;
+			e.playerPos.copyFrom(_player.getMidpoint());
+	}
 
 	
 }

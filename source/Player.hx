@@ -8,11 +8,15 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxAngle;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
+import flixel.group.FlxTypedGroup;
 
 class Player extends FlxSprite
 {
 	public var speed:Float = 200;
 	private var _sndStep:FlxSound;
+	
+	private static var SHOOT_RATE:Float = 1 / 10; // 10 shots per second
+	private var _bullets:FlxTypedGroup<Bullet>;
 	
 	public function new(X:Float=0, Y:Float=0) 
 	{
@@ -36,12 +40,14 @@ class Player extends FlxSprite
 		var _down:Bool = false;
 		var _left:Bool = false;
 		var _right:Bool = false;
+		var _shoot:Bool = false;
 		
 		#if !FLX_NO_KEYBOARD
 		_up = FlxG.keys.anyPressed(["UP", "W"]);
 		_down = FlxG.keys.anyPressed(["DOWN", "S"]);
 		_left = FlxG.keys.anyPressed(["LEFT", "A"]);
 		_right = FlxG.keys.anyPressed(["RIGHT", "D"]);
+		_shoot = FlxG.keys.anyPressed(["X"]);
 		#end
 		#if mobile
 		_up = _up || PlayState.virtualPad.buttonUp.status == FlxButton.PRESSED;
@@ -105,6 +111,10 @@ class Player extends FlxSprite
 				case FlxObject.DOWN:
 					animation.play("d");
 			}
+		}
+		if (_shoot)
+		{
+			_bullets.recycle(Bullet).shoot(_point, FlxObject.DOWN);
 		}
 		
 	}
